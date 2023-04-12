@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.deannhom.databinding.FragmentEditInfoBinding;
 
@@ -15,8 +14,7 @@ public class EditInfoFragment extends Fragment {
     private FragmentEditInfoBinding binding;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentEditInfoBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

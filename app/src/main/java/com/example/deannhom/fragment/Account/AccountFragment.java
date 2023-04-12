@@ -25,7 +25,7 @@ import java.text.MessageFormat;
 
 public class AccountFragment extends Fragment {
     private FragmentAccountBinding binding;
-    FirebaseAuth mAuth;
+    FirebaseAuth firebaseAuth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class AccountFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         // Inflate the layout for this fragment
         binding = FragmentAccountBinding.inflate(inflater, container, false);
@@ -53,17 +53,14 @@ public class AccountFragment extends Fragment {
 
         // Event Handlers
         binding.btnLogout.setOnClickListener(v -> {
-            FirebaseUser currentUser = mAuth.getCurrentUser();
+            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
             if (currentUser == null) {
                 Toast.makeText(this.getContext(), "You currently not signed in!", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            mAuth.signOut();
+            firebaseAuth.signOut();
             Toast.makeText(this.getContext(), "Logged out successfully!", Toast.LENGTH_LONG).show();
-
-            updateUI(currentUser);
-            root.invalidate();
         });
 
         binding.btnDarkmode.setOnClickListener(v -> {
@@ -79,8 +76,6 @@ public class AccountFragment extends Fragment {
             returnValue.editor.apply();
         });
 
-        binding.btnSignIn.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_navigation_account_to_navigation_login));
-
         binding.btnEditUser.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_navigation_account_to_navigation_edit_info));
 
         return root;
@@ -90,7 +85,7 @@ public class AccountFragment extends Fragment {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {
             currentUser.reload();
 
@@ -111,14 +106,6 @@ public class AccountFragment extends Fragment {
             binding.textUsername.setText(MessageFormat.format("Name: {0}", displayName));
             binding.textUserEmail.setText(MessageFormat.format("Email: {0}", email));
         }
-
-        updateUI(currentUser);
-    }
-
-    private void updateUI(FirebaseUser currentUser) {
-        /*if (currentUser == null) {
-            return;
-        }*/
     }
 
     @Override
