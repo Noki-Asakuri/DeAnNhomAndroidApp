@@ -69,8 +69,15 @@ public class DictionaryAPIClient {
                         Word currentWord = new Word();
                         currentWord.setWord(currentWordJSON.getString("word"));
 
-                        JSONObject phonetics = currentWordJSON.getJSONArray("phonetics").getJSONObject(0);
-                        currentWord.setPhonetics(new Phonetic(phonetics.getString("text"), phonetics.getString("audio"), ""));
+                        JSONArray phoneticsJsonArray = currentWordJSON.getJSONArray("phonetics");
+                        for (int phoneticsIndex = 0; phoneticsIndex < phoneticsJsonArray.length(); phoneticsIndex++) {
+                            JSONObject phonetic = phoneticsJsonArray.getJSONObject(phoneticsIndex);
+
+                            if (phonetic.has("text") && phonetic.has("sourceUrl")) {
+                                currentWord.setPhonetics(new Phonetic(phonetic.getString("text"), phonetic.getString("audio"), phonetic.getString("sourceUrl")));
+                                break;
+                            }
+                        }
 
                         JSONArray meanings = currentWordJSON.getJSONArray("meanings");
                         ArrayList<Meaning> meaningArrayList = new ArrayList<>();

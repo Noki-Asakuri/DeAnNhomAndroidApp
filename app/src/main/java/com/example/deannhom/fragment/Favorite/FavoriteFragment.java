@@ -101,7 +101,6 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.UserCa
                 Log.d(TAG, "get failed with ", task.getException());
             }
         });
-
     }
 
     @Override
