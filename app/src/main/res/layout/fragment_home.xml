@@ -56,25 +56,64 @@
         android:layout_marginTop="50dp">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/materialCardView2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="@color/search_icon"
 
+            android:backgroundTint="@color/search_icon"
             app:cardPreventCornerOverlap="false"
             app:cardUseCompatPadding="false"
             app:shapeAppearanceOverlay="@style/cornerTopOnly">
 
-            <ScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textDefinition"
+                <LinearLayout
+                    android:id="@+id/layoutTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp" />
+                    android:orientation="horizontal">
 
-            </ScrollView>
+                    <TextView
+                        android:id="@+id/textTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/btnFavorite"
+                        style="@style/Widget.Material3.Button.IconButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|end"
+                        android:backgroundTint="@android:color/transparent"
+                        android:contentDescription="TODO"
+                        android:visibility="invisible"
+
+                        app:fabSize="normal"
+                        app:srcCompat="@drawable/baseline_favorite_24" />
+
+                </LinearLayout>
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="60dp">
+
+                    <TextView
+                        android:id="@+id/textDefinition"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginBottom="50dp" />
+
+                </ScrollView>
+
+            </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 

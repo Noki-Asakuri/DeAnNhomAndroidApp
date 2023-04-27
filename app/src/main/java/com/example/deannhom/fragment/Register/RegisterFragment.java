@@ -39,6 +39,11 @@ public class RegisterFragment extends Fragment {
         binding = FragmentRegisterBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        binding.btnSignUp.setOnClickListener(Register());
+        binding.btnSignIn.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this).navigate(R.id.action_navigation_register_to_navigation_login);
+        });
+
         return root;
     }
 

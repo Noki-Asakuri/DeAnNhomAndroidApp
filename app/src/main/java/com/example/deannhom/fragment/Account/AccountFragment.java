@@ -51,6 +51,8 @@ public class AccountFragment extends Fragment {
             binding.btnDarkmode.setIconResource(R.drawable.baseline_light_mode_24);
         }
 
+        binding.btnSignIn.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_navigation_account_to_navigation_login));
+
         // Event Handlers
         binding.btnLogout.setOnClickListener(v -> {
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -76,7 +78,16 @@ public class AccountFragment extends Fragment {
             returnValue.editor.apply();
         });
 
-        binding.btnEditUser.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_navigation_account_to_navigation_edit_info));
+        binding.btnEditUser.setOnClickListener(v -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user == null) {
+                Toast.makeText(this.requireContext(), "You haven't login yet!", Toast.LENGTH_SHORT).show();
+
+                return;
+            }
+
+            NavHostFragment.findNavController(this).navigate(R.id.action_navigation_account_to_navigation_edit_info);
+        });
 
         return root;
     }

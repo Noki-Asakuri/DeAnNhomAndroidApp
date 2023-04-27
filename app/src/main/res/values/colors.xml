@@ -15,4 +15,5 @@
     <color name="text">#34597C</color>
 
     <color name="search_icon">#e0e0e0</color>
+    <color name="favorite">#e26f71</color>
 </resources>

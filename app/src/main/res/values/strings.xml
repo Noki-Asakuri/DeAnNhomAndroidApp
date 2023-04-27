@@ -48,4 +48,8 @@
     <string name="facebook_login">Facebook login</string>
     <string name="google_login">Google Login</string>
     <string name="edit_button">Edit</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="phone">Phone</string>
+    <string name="confirm_edit">Confirm</string>
 </resources>

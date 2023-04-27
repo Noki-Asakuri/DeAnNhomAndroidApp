@@ -17,8 +17,8 @@
         android:fontFamily="@font/inconsolata"
         android:gravity="center"
         android:text="@string/account_text"
-        android:textSize="35sp"
         android:textColor="@color/white"
+        android:textSize="35sp"
         android:textStyle="bold" />
 
     <ImageView
@@ -75,13 +75,17 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_corner"
             android:backgroundTint="@color/white"
+            android:drawablePadding="10dp"
             android:fontFamily="@font/inconsolata"
             android:gravity="center|start"
             android:paddingHorizontal="30dp"
             android:paddingVertical="15dp"
             android:text="@string/name"
             android:textColor="@color/black"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+
+            app:drawableStartCompat="@drawable/round_account_circle_24"
+            app:drawableTint="@color/black" />
 
         <TextView
             android:id="@+id/textUserEmail"
@@ -90,13 +94,17 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_corner"
             android:backgroundTint="@color/white"
+            android:drawablePadding="10dp"
             android:fontFamily="@font/inconsolata"
             android:gravity="center|start"
             android:paddingHorizontal="30dp"
             android:paddingVertical="15dp"
             android:text="@string/email"
             android:textColor="@color/black"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+
+            app:drawableStartCompat="@drawable/baseline_email_24"
+            app:drawableTint="@color/black" />
 
         <TextView
             android:layout_width="wrap_content"

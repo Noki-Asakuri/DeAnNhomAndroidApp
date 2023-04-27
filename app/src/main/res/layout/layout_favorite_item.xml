@@ -49,9 +49,9 @@
             android:gravity="center"
             android:minWidth="0dp"
             android:minHeight="0dp"
-            app:icon="@drawable/baseline_star_24"
+            app:icon="@drawable/baseline_favorite_24"
             app:iconSize="30dp"
-            app:iconTint="#fdad03" />
+            app:iconTint="@color/favorite" />
 
     </com.google.android.flexbox.FlexboxLayout>
 

@@ -100,7 +100,7 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.UserCall
         firebaseFirestore.collection("histories").document(id).delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this.getContext(), "Removed successfully", Toast.LENGTH_LONG).show();
-                historyAdapter.notifyItemRemoved(position);
+                historyAdapter.notifyDataSetChanged();
             } else {
                 Log.d(TAG, "get failed with ", task.getException());
             }

@@ -1,5 +1,7 @@
 package com.example.deannhom.model.API;
 
+import androidx.annotation.NonNull;
+
 public class Phonetic {
     String text;
     String audio;
@@ -33,5 +35,11 @@ public class Phonetic {
 
     public void setSourceUrl(String sourceUrl) {
         this.sourceUrl = sourceUrl;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return text + " " + audio + " " + sourceUrl;
     }
 }

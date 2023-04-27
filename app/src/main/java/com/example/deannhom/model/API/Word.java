@@ -1,28 +1,23 @@
 package com.example.deannhom.model.API;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Word {
 
     String word;
-    ArrayList<Phonetic> phonetics;
+    Phonetic phonetic;
     ArrayList<Meaning> meanings;
-
-    public String getWord() {
-        return word;
-    }
 
     public void setWord(String word) {
         this.word = word;
     }
 
-    public ArrayList<Phonetic> getPhonetics() {
-        return phonetics;
+    public Phonetic getPhonetics() {
+        return phonetic;
     }
 
-    public void setPhonetics(ArrayList<Phonetic> phonetics) {
-        this.phonetics = phonetics;
+    public void setPhonetics(Phonetic phonetic) {
+        this.phonetic = phonetic;
     }
 
     public ArrayList<Meaning> getMeanings() {
