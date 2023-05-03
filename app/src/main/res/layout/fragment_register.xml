@@ -146,66 +146,6 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                app:dividerColor="@color/divider" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/inconsolata"
-                android:gravity="center"
-                android:text="@string/or_sign_in_with"
-                android:textSize="25sp"
-                android:textStyle="bold" />
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                app:dividerColor="@color/divider" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/btnGoogleRegister"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/white_box"
-                android:contentDescription="@string/google_login"
-                android:src="@drawable/google_icon"
-                app:cornerRadius="30dp" />
-
-            <ImageButton
-                android:id="@+id/btnFacebookRegister"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/white_box"
-                android:contentDescription="@string/facebook_login"
-                android:src="@drawable/facebook_icon" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

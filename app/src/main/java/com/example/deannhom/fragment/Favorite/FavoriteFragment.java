@@ -96,7 +96,10 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.UserCa
         firebaseFirestore.collection("favorites").document(id).delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this.getContext(), "Removed successfully", Toast.LENGTH_LONG).show();
-                favoriteAdapter.notifyDataSetChanged();
+
+                favoriteArrayList.remove(position);
+                favoriteAdapter.notifyItemRemoved(position);
+
             } else {
                 Log.d(TAG, "get failed with ", task.getException());
             }

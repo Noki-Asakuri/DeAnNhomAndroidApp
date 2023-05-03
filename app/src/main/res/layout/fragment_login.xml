@@ -158,40 +158,6 @@
                         android:orientation="vertical"
                         android:paddingHorizontal="20dp">
 
-                        <Button
-                            android:id="@+id/btnGoogleLogin"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:backgroundTint="#d9d9d9"
-                            android:fontFamily="@font/inconsolata"
-                            android:text="@string/login_with_google"
-                            android:textAllCaps="false"
-                            android:textColor="@color/black"
-                            android:textSize="23sp"
-                            android:textStyle="bold"
-                            app:cornerRadius="30dp"
-
-                            app:icon="@drawable/google_icon"
-                            app:iconTint="@null" />
-
-                        <Button
-                            android:id="@+id/btnFacebookLogin"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:backgroundTint="#d9d9d9"
-                            android:fontFamily="@font/inconsolata"
-                            android:text="@string/login_with_facebook"
-                            android:textAllCaps="false"
-                            android:textColor="@color/black"
-                            android:textSize="23sp"
-                            android:textStyle="bold"
-                            app:cornerRadius="30dp"
-
-                            app:icon="@drawable/facebook_icon"
-                            app:iconTint="@null" />
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
