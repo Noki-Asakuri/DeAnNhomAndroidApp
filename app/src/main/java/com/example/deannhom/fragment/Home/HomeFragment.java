@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.deannhom.R;
 import com.example.deannhom.databinding.FragmentHomeBinding;
@@ -27,6 +28,7 @@ import com.example.deannhom.model.API.Meaning;
 import com.example.deannhom.model.API.Word;
 import com.example.deannhom.utils.DictionaryAPIClient;
 import com.example.deannhom.utils.Utils;
+import com.example.deannhom.utils.WordTuple;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
@@ -61,9 +63,43 @@ public class HomeFragment extends Fragment {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
         StrictMode.setThreadPolicy(policy);
 
+        HomeViewModel homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        homeViewModel.word.observe(getViewLifecycleOwner(), word -> {
+            if (word == null) {
+                binding.textTitle.setText("");
+                binding.textDefinition.setText("");
+
+                binding.btnFavorite.setVisibility(View.INVISIBLE);
+                binding.btnAudio.setVisibility(View.INVISIBLE);
+
+                return;
+            }
+
+            if (word.word != null && word.audioUrl == null && word.definition == null && word.title == null) {
+                binding.inputWord.setText(word.word);
+                binding.btnSearch.callOnClick();
+
+                return;
+            }
+
+            binding.inputWord.setText(word.word);
+            binding.textTitle.setText(word.title);
+            binding.textDefinition.setText(word.definition);
+
+            binding.btnFavorite.setVisibility(View.VISIBLE);
+
+            if (word.audioUrl != null && !word.audioUrl.isEmpty()) {
+                currentAudioUrl = word.audioUrl;
+                binding.btnAudio.setVisibility(View.VISIBLE);
+            } else {
+                currentAudioUrl = null;
+            }
+        });
 
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -125,22 +161,11 @@ public class HomeFragment extends Fragment {
             if (mediaPlayer == null) {
                 // initializing media player
                 mediaPlayer = new MediaPlayer();
-
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             }
 
             if (mediaPlayer.isPlaying()) {
-                if (mediaPlayer == null) {
-                    return;
-                }
-
-                mediaPlayer.stop();
-                mediaPlayer.reset();
-                mediaPlayer.release();
-
-                mediaPlayer = null;
-
-                binding.btnAudio.setImageDrawable(ContextCompat.getDrawable(this.requireContext(), R.drawable.baseline_play_arrow_24));
+                onDonePlayingPlayer();
             } else {
                 // below line is use to set our
                 // url to our media player.
@@ -163,8 +188,7 @@ public class HomeFragment extends Fragment {
         });
 
         binding.btnSearch.setOnClickListener(v -> {
-            binding.textTitle.setText("");
-            binding.textDefinition.setText("");
+            homeViewModel.word.setValue(null);
 
             String userInputWord = Objects.requireNonNull(binding.inputWord.getText()).toString();
             if (userInputWord.isEmpty()) {
@@ -185,7 +209,7 @@ public class HomeFragment extends Fragment {
             dictionaryAPIClient.fetchDefinitionFromApi(userInputWord, wordArrayList -> {
                 if (wordArrayList != null) {
 
-                    binding.btnAudio.setVisibility(View.VISIBLE);
+                    binding.btnAudio.setVisibility(View.INVISIBLE);
                     binding.btnFavorite.setVisibility(View.VISIBLE);
                     binding.btnFavorite.setImageTintList(getColorBaseOnMode());
 
@@ -193,16 +217,15 @@ public class HomeFragment extends Fragment {
                     if (firebaseUser != null) {
                         addWordIntoHistoryCollection(firebaseUser);
 
-                        firebaseFirestore.collection("favorites").where(Filter.and(Filter.equalTo("userId", firebaseUser.getUid()), Filter.equalTo("word", userInputWord)))
-                                .get().addOnCompleteListener(task -> {
-                                    if (task.isSuccessful()) {
-                                        QuerySnapshot document = task.getResult();
+                        firebaseFirestore.collection("favorites").where(Filter.and(Filter.equalTo("userId", firebaseUser.getUid()), Filter.equalTo("word", userInputWord))).get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                QuerySnapshot document = task.getResult();
 
-                                        if (!document.isEmpty()) {
-                                            binding.btnFavorite.setImageTintList(ColorStateList.valueOf(Color.rgb(226, 111, 113)));
-                                        }
-                                    }
-                                });
+                                if (!document.isEmpty()) {
+                                    binding.btnFavorite.setImageTintList(ColorStateList.valueOf(Color.rgb(226, 111, 113)));
+                                }
+                            }
+                        });
                     }
 
                     // Set main word
@@ -213,16 +236,14 @@ public class HomeFragment extends Fragment {
                         titleText += " - Phonetic: " + wordArrayList.get(0).getPhonetics().getText();
                     }
 
-                    binding.textTitle.setText(titleText);
-                    binding.btnAudio.setVisibility(View.INVISIBLE);
-
                     StringBuilder definitionText = new StringBuilder();
                     // Set meanings
                     int position = 1;
+                    String audioUrl = "";
                     definitionText.append(" - Meaning: ").append("\n");
                     for (Word word : wordArrayList) {
                         if (word.getPhonetics() != null) {
-                            currentAudioUrl = word.getPhonetics().getAudio();
+                            audioUrl = word.getPhonetics().getAudio();
                             binding.btnAudio.setVisibility(View.VISIBLE);
                         }
 
@@ -233,7 +254,8 @@ public class HomeFragment extends Fragment {
                         }
                     }
 
-                    binding.textDefinition.setText(definitionText.toString());
+                    WordTuple wordTuple = new WordTuple(userInputWord, titleText, definitionText.toString(), audioUrl);
+                    homeViewModel.word.setValue(wordTuple);
 
                 } else {
                     binding.btnAudio.setVisibility(View.INVISIBLE);

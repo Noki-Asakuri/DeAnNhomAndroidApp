@@ -1,6 +1,5 @@
 package com.example.deannhom;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +10,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.deannhom.databinding.ActivityMainBinding;
-import com.example.deannhom.utils.Tuple;
 import com.example.deannhom.utils.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,9 +23,9 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.Theme_DeAnNhom);
         super.onCreate(savedInstanceState);
 
-        Tuple<Boolean, SharedPreferences.Editor> returnValue = Utils.isDarkMode(this);
+        boolean isDarkModeOn = Utils.isDarkMode(this, true);
 
-        if (returnValue.isDarkModeOn) {
+        if (isDarkModeOn) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
