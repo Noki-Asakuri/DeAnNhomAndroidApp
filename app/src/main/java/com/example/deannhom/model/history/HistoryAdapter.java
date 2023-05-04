@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deannhom.R;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -40,8 +41,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         History item = historyArrayList.get(position);
 
         holder.textHistoryWord.setText(item.getWord());
-        holder.textHistoryTranslated.setText(item.getTranslatedWord());
-
+        holder.layoutHistory.setOnClickListener(view -> userCallback.onItemClicked(item.getId(), position));
         holder.btnDeleteHistoryWord.setOnClickListener(view -> userCallback.onItemDelete(item.getId(), position));
     }
 
@@ -52,18 +52,21 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     public interface UserCallback {
         void onItemDelete(String id, int position);
+
+        void onItemClicked(String id, int position);
     }
 
     static class HistoryViewHolder extends RecyclerView.ViewHolder {
-        TextView textHistoryWord, textHistoryTranslated;
+        TextView textHistoryWord;
+        FlexboxLayout layoutHistory;
         MaterialButton btnDeleteHistoryWord;
 
         public HistoryViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            textHistoryWord = itemView.findViewById(R.id.textHistoryWord);
-            textHistoryTranslated = itemView.findViewById(R.id.textHistoryTranslated);
+            layoutHistory = itemView.findViewById(R.id.layoutHistory);
 
+            textHistoryWord = itemView.findViewById(R.id.textHistoryWord);
             btnDeleteHistoryWord = itemView.findViewById(R.id.btnDeleteHistoryWord);
         }
     }

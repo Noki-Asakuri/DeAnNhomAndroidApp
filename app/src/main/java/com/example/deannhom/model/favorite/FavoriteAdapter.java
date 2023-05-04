@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deannhom.R;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -40,8 +41,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
         Favorite item = favoriteArrayList.get(position);
 
         holder.textFavoriteWord.setText(item.getWord());
-        holder.textFavoriteTranslated.setText(item.getTranslatedWord());
-
+        holder.layoutFavorite.setOnClickListener(view -> userCallback.onItemClicked(item.getId(), position));
         holder.btnUnfavoriteWord.setOnClickListener(view -> userCallback.onItemUnfavorite(item.getId(), position));
     }
 
@@ -52,18 +52,21 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
 
     public interface UserCallback {
         void onItemUnfavorite(String id, int position);
+
+        void onItemClicked(String id, int position);
     }
 
     static class FavoriteViewHolder extends RecyclerView.ViewHolder {
-        TextView textFavoriteWord, textFavoriteTranslated;
+        TextView textFavoriteWord;
+        FlexboxLayout layoutFavorite;
         MaterialButton btnUnfavoriteWord;
 
         public FavoriteViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            textFavoriteWord = itemView.findViewById(R.id.textFavoriteWord);
-            textFavoriteTranslated = itemView.findViewById(R.id.textFavoriteTranslated);
+            layoutFavorite = itemView.findViewById(R.id.layoutFavorite);
 
+            textFavoriteWord = itemView.findViewById(R.id.textFavoriteWord);
             btnUnfavoriteWord = itemView.findViewById(R.id.btnUnfavoriteWord);
         }
     }

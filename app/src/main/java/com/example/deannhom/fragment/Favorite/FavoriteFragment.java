@@ -12,11 +12,16 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.deannhom.R;
 import com.example.deannhom.databinding.FragmentFavoriteBinding;
+import com.example.deannhom.fragment.Home.HomeViewModel;
 import com.example.deannhom.model.favorite.Favorite;
 import com.example.deannhom.model.favorite.FavoriteAdapter;
+import com.example.deannhom.utils.WordTuple;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -34,8 +39,12 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.UserCa
     FirebaseFirestore firebaseFirestore;
     FirebaseAuth firebaseAuth;
 
+    HomeViewModel homeViewModel;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+
         // Inflate the layout for this fragment
         binding = FragmentFavoriteBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -45,7 +54,7 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.UserCa
         firebaseAuth = FirebaseAuth.getInstance();
 
         // Load user history data
-        loadUserHistoryData();
+        loadUserFavoriteData();
 
         favoriteAdapter = new FavoriteAdapter(favoriteArrayList, this);
 
@@ -67,7 +76,7 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.UserCa
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void loadUserHistoryData() {
+    public void loadUserFavoriteData() {
         favoriteArrayList = new ArrayList<>();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
@@ -106,6 +115,14 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.UserCa
                 Log.d(TAG, "get failed with ", task.getException());
             }
         });
+    }
+
+    @Override
+    public void onItemClicked(String id, int position) {
+        Favorite wordFavorite = favoriteArrayList.get(position);
+
+        homeViewModel.word.setValue(new WordTuple(wordFavorite.getWord(), null, null, null));
+        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_favorite_to_navigation_home);
     }
 
     @Override

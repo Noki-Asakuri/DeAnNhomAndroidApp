@@ -12,11 +12,16 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.deannhom.R;
 import com.example.deannhom.databinding.FragmentHistoryBinding;
+import com.example.deannhom.fragment.Home.HomeViewModel;
 import com.example.deannhom.model.history.History;
 import com.example.deannhom.model.history.HistoryAdapter;
+import com.example.deannhom.utils.WordTuple;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,6 +38,8 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.UserCall
     FirebaseFirestore firebaseFirestore;
     FirebaseAuth firebaseAuth;
 
+    HomeViewModel homeViewModel;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +47,8 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.UserCall
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+
         // Inflate the layout for this fragment
         binding = FragmentHistoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -79,21 +88,20 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.UserCall
             return;
         }
 
-        firebaseFirestore.collection("histories").whereEqualTo("userId", currentUser.getUid())
-                .orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            History history = document.toObject(History.class);
-                            history.setId(document.getId());
+        firebaseFirestore.collection("histories").whereEqualTo("userId", currentUser.getUid()).orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    History history = document.toObject(History.class);
+                    history.setId(document.getId());
 
-                            historyArrayList.add(history);
-                        }
+                    historyArrayList.add(history);
+                }
 
-                        historyAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
-                });
+                historyAdapter.notifyDataSetChanged();
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
+            }
+        });
 
     }
 
@@ -109,6 +117,14 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.UserCall
                 Log.d(TAG, "get failed with ", task.getException());
             }
         });
+    }
+
+    @Override
+    public void onItemClicked(String id, int position) {
+        History wordHistory = historyArrayList.get(position);
+
+        homeViewModel.word.setValue(new WordTuple(wordHistory.getWord(), null, null, null));
+        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_history_to_navigation_home);
 
     }
 

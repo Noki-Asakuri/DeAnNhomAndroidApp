@@ -6,40 +6,22 @@
     android:orientation="vertical">
 
     <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/layoutFavorite"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="25dp"
-        android:paddingVertical="10dp"
         app:alignItems="center"
         app:justifyContent="space_between">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/textFavoriteWord"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textFavoriteWord"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:fontFamily="@font/inconsolata"
-                android:text="@string/history_placeholder_word"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/textFavoriteTranslated"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/inconsolata"
-                android:text="@string/history_placeholder_translated"
-                android:textColor="#7C7C7C"
-                android:textSize="15sp" />
-
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/inconsolata"
+            android:text="@string/history_placeholder_word"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUnfavoriteWord"
