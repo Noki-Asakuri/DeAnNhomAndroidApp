@@ -20,6 +20,7 @@ import com.example.deannhom.model.history.HistoryAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -78,20 +79,21 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.UserCall
             return;
         }
 
-        firebaseFirestore.collection("histories").whereEqualTo("userId", currentUser.getUid()).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    History history = document.toObject(History.class);
-                    history.setId(document.getId());
+        firebaseFirestore.collection("histories").whereEqualTo("userId", currentUser.getUid())
+                .orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            History history = document.toObject(History.class);
+                            history.setId(document.getId());
 
-                    historyArrayList.add(history);
-                }
+                            historyArrayList.add(history);
+                        }
 
-                historyAdapter.notifyDataSetChanged();
-            } else {
-                Log.d(TAG, "get failed with ", task.getException());
-            }
-        });
+                        historyAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                });
 
     }
 

@@ -20,6 +20,7 @@ import com.example.deannhom.model.favorite.FavoriteAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -74,20 +75,21 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.UserCa
             return;
         }
 
-        firebaseFirestore.collection("favorites").whereEqualTo("userId", currentUser.getUid()).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    Favorite favorite = document.toObject(Favorite.class);
-                    favorite.setId(document.getId());
+        firebaseFirestore.collection("favorites").whereEqualTo("userId", currentUser.getUid())
+                .orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Favorite favorite = document.toObject(Favorite.class);
+                            favorite.setId(document.getId());
 
-                    favoriteArrayList.add(favorite);
-                }
+                            favoriteArrayList.add(favorite);
+                        }
 
-                favoriteAdapter.notifyDataSetChanged();
-            } else {
-                Log.d(TAG, "get failed with ", task.getException());
-            }
-        });
+                        favoriteAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                });
 
     }
 
