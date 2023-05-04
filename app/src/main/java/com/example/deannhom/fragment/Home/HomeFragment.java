@@ -3,10 +3,12 @@ package com.example.deannhom.fragment.Home;
 import static android.content.ContentValues.TAG;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -24,8 +26,10 @@ import com.example.deannhom.databinding.FragmentHomeBinding;
 import com.example.deannhom.model.API.Meaning;
 import com.example.deannhom.model.API.Word;
 import com.example.deannhom.utils.DictionaryAPIClient;
+import com.example.deannhom.utils.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -83,6 +87,7 @@ public class HomeFragment extends Fragment {
 
                         favorite.put("userId", firebaseUser.getUid());
                         favorite.put("word", userInputWord);
+                        favorite.put("timestamp", FieldValue.serverTimestamp());
 
                         firebaseFirestore.collection("favorites").add(favorite).addOnCompleteListener(innerTask -> {
                             if (innerTask.isSuccessful()) {
@@ -100,7 +105,7 @@ public class HomeFragment extends Fragment {
                                 if (deleteTask.isSuccessful()) {
                                     Toast.makeText(this.getContext(), "Unfavorite word successfully!", Toast.LENGTH_LONG).show();
 
-                                    binding.btnFavorite.setImageTintList(ColorStateList.valueOf(Color.rgb(0, 0, 0)));
+                                    binding.btnFavorite.setImageTintList(getColorBaseOnMode());
                                 } else {
                                     Log.d(TAG, "get failed with ", task.getException());
                                 }
@@ -116,8 +121,6 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(this.requireContext(), "No audio url found.", Toast.LENGTH_LONG).show();
                 return;
             }
-
-            Log.i("AUDIO", currentAudioUrl);
 
             if (mediaPlayer == null) {
                 // initializing media player
@@ -169,14 +172,14 @@ public class HomeFragment extends Fragment {
                 return;
             }
 
+            boolean hasInternet = isNetworkConnected();
+            if (!hasInternet) {
+                Toast.makeText(this.getContext(), "You must have internet connection to search word", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             Activity activity = this.getActivity();
             assert activity != null;
-
-//            InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-//
-//            if (inputManager != null) {
-//                inputManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-//            }
 
             DictionaryAPIClient dictionaryAPIClient = new DictionaryAPIClient();
             dictionaryAPIClient.fetchDefinitionFromApi(userInputWord, wordArrayList -> {
@@ -184,29 +187,34 @@ public class HomeFragment extends Fragment {
 
                     binding.btnAudio.setVisibility(View.VISIBLE);
                     binding.btnFavorite.setVisibility(View.VISIBLE);
-                    binding.btnFavorite.setImageTintList(ColorStateList.valueOf(Color.rgb(0, 0, 0)));
+                    binding.btnFavorite.setImageTintList(getColorBaseOnMode());
 
                     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                     if (firebaseUser != null) {
                         addWordIntoHistoryCollection(firebaseUser);
 
-                        firebaseFirestore.collection("favorites").where(Filter.and(Filter.equalTo("userId", firebaseUser.getUid()), Filter.equalTo("word", userInputWord))).get().addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                QuerySnapshot document = task.getResult();
+                        firebaseFirestore.collection("favorites").where(Filter.and(Filter.equalTo("userId", firebaseUser.getUid()), Filter.equalTo("word", userInputWord)))
+                                .get().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        QuerySnapshot document = task.getResult();
 
-                                if (!document.isEmpty()) {
-                                    binding.btnFavorite.setImageTintList(ColorStateList.valueOf(Color.rgb(226, 111, 113)));
-                                }
-                            }
-                        });
+                                        if (!document.isEmpty()) {
+                                            binding.btnFavorite.setImageTintList(ColorStateList.valueOf(Color.rgb(226, 111, 113)));
+                                        }
+                                    }
+                                });
                     }
 
                     // Set main word
-                    String titleText = " - Word: " + userInputWord + "\n" +
-                            // Set phonetics
-                            " - Phonetic: " + wordArrayList.get(0).getPhonetics().getText();
+                    String titleText = " - Word: " + userInputWord + "\n";
+
+                    // Set phonetics
+                    if (wordArrayList.get(0).getPhonetics() != null) {
+                        titleText += " - Phonetic: " + wordArrayList.get(0).getPhonetics().getText();
+                    }
 
                     binding.textTitle.setText(titleText);
+                    binding.btnAudio.setVisibility(View.INVISIBLE);
 
                     StringBuilder definitionText = new StringBuilder();
                     // Set meanings
@@ -215,6 +223,7 @@ public class HomeFragment extends Fragment {
                     for (Word word : wordArrayList) {
                         if (word.getPhonetics() != null) {
                             currentAudioUrl = word.getPhonetics().getAudio();
+                            binding.btnAudio.setVisibility(View.VISIBLE);
                         }
 
                         for (Meaning meaning : word.getMeanings()) {
@@ -240,6 +249,24 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) this.requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
+    ColorStateList getColorBaseOnMode() {
+        int color;
+
+        if (Utils.isDarkMode(this.requireContext(), true)) {
+            color = Color.rgb(255, 255, 255);
+        } else {
+            color = Color.rgb(0, 0, 0);
+        }
+
+        return ColorStateList.valueOf(color);
+    }
+
     void addWordIntoHistoryCollection(FirebaseUser firebaseUser) {
         String userInputWord = Objects.requireNonNull(binding.inputWord.getText()).toString();
 
@@ -252,6 +279,7 @@ public class HomeFragment extends Fragment {
 
                     history.put("userId", firebaseUser.getUid());
                     history.put("word", userInputWord);
+                    history.put("timestamp", FieldValue.serverTimestamp());
 
                     firebaseFirestore.collection("histories").add(history).addOnCompleteListener(innerTask -> {
                         if (innerTask.isSuccessful()) {
@@ -260,6 +288,19 @@ public class HomeFragment extends Fragment {
                             Log.e("History", Objects.requireNonNull(innerTask.getException()).getMessage());
                         }
                     });
+                } else {
+                    Map<String, Object> history = new HashMap<>();
+                    history.put("timestamp", FieldValue.serverTimestamp());
+
+                    for (QueryDocumentSnapshot documentSnapshot : document) {
+                        firebaseFirestore.collection("histories").document(documentSnapshot.getId()).update(history).addOnCompleteListener(innerTask -> {
+                            if (innerTask.isSuccessful()) {
+                                Log.i("History", "History updated " + userInputWord);
+                            } else {
+                                Log.e("History", Objects.requireNonNull(innerTask.getException()).getMessage());
+                            }
+                        });
+                    }
                 }
             }
         });

@@ -27,4 +27,10 @@ public class Utils {
 
         return new Tuple<>(isDarkModeOn, editor);
     }
+
+    public static boolean isDarkMode(Context context, boolean placeholder) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+
+        return sharedPreferences.getBoolean("isDarkModeOn", false);
+    }
 }
