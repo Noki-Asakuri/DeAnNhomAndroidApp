@@ -62,6 +62,13 @@ public class AccountFragment extends Fragment {
             }
 
             firebaseAuth.signOut();
+
+            binding.btnLogout.setVisibility(View.GONE);
+            binding.btnSignIn.setVisibility(View.VISIBLE);
+
+            binding.textUsername.setText(R.string.name);
+            binding.textUserEmail.setText(R.string.email);
+
             Toast.makeText(this.getContext(), "Logged out successfully!", Toast.LENGTH_LONG).show();
         });
 
@@ -116,6 +123,14 @@ public class AccountFragment extends Fragment {
 
             binding.textUsername.setText(MessageFormat.format("Name: {0}", displayName));
             binding.textUserEmail.setText(MessageFormat.format("Email: {0}", email));
+
+            binding.btnEditUser.setVisibility(View.VISIBLE);
+            binding.btnLogout.setVisibility(View.VISIBLE);
+            binding.btnSignIn.setVisibility(View.GONE);
+        } else {
+            binding.btnEditUser.setVisibility(View.GONE);
+            binding.btnLogout.setVisibility(View.GONE);
+            binding.btnSignIn.setVisibility(View.VISIBLE);
         }
     }
 
