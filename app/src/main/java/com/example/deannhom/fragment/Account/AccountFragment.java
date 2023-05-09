@@ -63,6 +63,7 @@ public class AccountFragment extends Fragment {
 
             firebaseAuth.signOut();
 
+            binding.btnEditUser.setVisibility(View.GONE);
             binding.btnLogout.setVisibility(View.GONE);
             binding.btnSignIn.setVisibility(View.VISIBLE);
 
