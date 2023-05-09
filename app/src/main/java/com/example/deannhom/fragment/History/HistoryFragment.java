@@ -2,7 +2,6 @@ package com.example.deannhom.fragment.History;
 
 import static android.content.ContentValues.TAG;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -79,7 +78,6 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.UserCall
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     public void loadUserHistoryData() {
         historyArrayList = new ArrayList<>();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -88,31 +86,34 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.UserCall
             return;
         }
 
-        firebaseFirestore.collection("histories").whereEqualTo("userId", currentUser.getUid()).orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    History history = document.toObject(History.class);
-                    history.setId(document.getId());
+        firebaseFirestore.collection("histories").whereEqualTo("userId", currentUser.getUid())
+                .orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            History history = document.toObject(History.class);
+                            history.setId(document.getId());
 
-                    historyArrayList.add(history);
-                }
+                            historyArrayList.add(history);
+                        }
 
-                historyAdapter.notifyDataSetChanged();
-            } else {
-                Log.d(TAG, "get failed with ", task.getException());
-            }
-        });
+                        historyAdapter.notifyItemRangeInserted(0, historyArrayList.size());
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                });
 
     }
 
     @Override
-    public void onItemDelete(String id, int position) {
-        firebaseFirestore.collection("histories").document(id).delete().addOnCompleteListener(task -> {
+    public void onItemDelete(History history, int position) {
+        firebaseFirestore.collection("histories").document(history.getId()).delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                int index = historyArrayList.indexOf(history);
+
+                historyArrayList.remove(index);
+                historyAdapter.notifyItemRemoved(index);
+
                 Toast.makeText(this.getContext(), "Removed successfully", Toast.LENGTH_LONG).show();
-
-                historyArrayList.remove(position);
-                historyAdapter.notifyItemRemoved(position);
             } else {
                 Log.d(TAG, "get failed with ", task.getException());
             }
@@ -120,10 +121,8 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.UserCall
     }
 
     @Override
-    public void onItemClicked(String id, int position) {
-        History wordHistory = historyArrayList.get(position);
-
-        homeViewModel.word.setValue(new WordTuple(wordHistory.getWord(), null, null, null));
+    public void onItemClicked(History history, int position) {
+        homeViewModel.word.setValue(new WordTuple(history.getWord(), null, null, null));
         NavHostFragment.findNavController(this).navigate(R.id.action_navigation_history_to_navigation_home);
 
     }

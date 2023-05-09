@@ -41,8 +41,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         History item = historyArrayList.get(position);
 
         holder.textHistoryWord.setText(item.getWord());
-        holder.layoutHistory.setOnClickListener(view -> userCallback.onItemClicked(item.getId(), position));
-        holder.btnDeleteHistoryWord.setOnClickListener(view -> userCallback.onItemDelete(item.getId(), position));
+        holder.layoutHistory.setOnClickListener(view -> userCallback.onItemClicked(item, position));
+        holder.btnDeleteHistoryWord.setOnClickListener(view -> userCallback.onItemDelete(item, position));
     }
 
     @Override
@@ -51,9 +51,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     }
 
     public interface UserCallback {
-        void onItemDelete(String id, int position);
+        void onItemDelete(History history, int position);
 
-        void onItemClicked(String id, int position);
+        void onItemClicked(History history, int position);
     }
 
     static class HistoryViewHolder extends RecyclerView.ViewHolder {

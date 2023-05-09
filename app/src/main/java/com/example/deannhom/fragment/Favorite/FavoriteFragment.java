@@ -2,7 +2,6 @@ package com.example.deannhom.fragment.Favorite;
 
 import static android.content.ContentValues.TAG;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -75,7 +74,6 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.UserCa
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     public void loadUserFavoriteData() {
         favoriteArrayList = new ArrayList<>();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -84,33 +82,33 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.UserCa
             return;
         }
 
-        firebaseFirestore.collection("favorites").whereEqualTo("userId", currentUser.getUid())
-                .orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Favorite favorite = document.toObject(Favorite.class);
-                            favorite.setId(document.getId());
+        firebaseFirestore.collection("favorites").whereEqualTo("userId", currentUser.getUid()).orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Favorite favorite = document.toObject(Favorite.class);
+                    favorite.setId(document.getId());
 
-                            favoriteArrayList.add(favorite);
-                        }
+                    favoriteArrayList.add(favorite);
+                }
 
-                        favoriteAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
-                });
+                favoriteAdapter.notifyItemRangeInserted(0, favoriteArrayList.size());
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
+            }
+        });
 
     }
 
     @Override
-    public void onItemUnfavorite(String id, int position) {
-        firebaseFirestore.collection("favorites").document(id).delete().addOnCompleteListener(task -> {
+    public void onItemUnfavorite(Favorite favorite, int position) {
+        firebaseFirestore.collection("favorites").document(favorite.getId()).delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                int index = favoriteArrayList.indexOf(favorite);
+
+                favoriteArrayList.remove(index);
+                favoriteAdapter.notifyItemRemoved(index);
+
                 Toast.makeText(this.getContext(), "Removed successfully", Toast.LENGTH_LONG).show();
-
-                favoriteArrayList.remove(position);
-                favoriteAdapter.notifyItemRemoved(position);
-
             } else {
                 Log.d(TAG, "get failed with ", task.getException());
             }
@@ -118,10 +116,8 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.UserCa
     }
 
     @Override
-    public void onItemClicked(String id, int position) {
-        Favorite wordFavorite = favoriteArrayList.get(position);
-
-        homeViewModel.word.setValue(new WordTuple(wordFavorite.getWord(), null, null, null));
+    public void onItemClicked(Favorite favorite, int position) {
+        homeViewModel.word.setValue(new WordTuple(favorite.getWord(), null, null, null));
         NavHostFragment.findNavController(this).navigate(R.id.action_navigation_favorite_to_navigation_home);
     }
 

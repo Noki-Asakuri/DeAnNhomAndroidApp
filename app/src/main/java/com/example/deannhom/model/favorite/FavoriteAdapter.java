@@ -41,8 +41,8 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
         Favorite item = favoriteArrayList.get(position);
 
         holder.textFavoriteWord.setText(item.getWord());
-        holder.layoutFavorite.setOnClickListener(view -> userCallback.onItemClicked(item.getId(), position));
-        holder.btnUnfavoriteWord.setOnClickListener(view -> userCallback.onItemUnfavorite(item.getId(), position));
+        holder.layoutFavorite.setOnClickListener(view -> userCallback.onItemClicked(item, position));
+        holder.btnUnfavoriteWord.setOnClickListener(view -> userCallback.onItemUnfavorite(item, position));
     }
 
     @Override
@@ -51,9 +51,9 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
     }
 
     public interface UserCallback {
-        void onItemUnfavorite(String id, int position);
+        void onItemUnfavorite(Favorite favorite, int position);
 
-        void onItemClicked(String id, int position);
+        void onItemClicked(Favorite favorite, int position);
     }
 
     static class FavoriteViewHolder extends RecyclerView.ViewHolder {
