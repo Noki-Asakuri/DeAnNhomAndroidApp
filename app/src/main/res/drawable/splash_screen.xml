@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:width="412dp"
-        android:height="829dp"
-        android:drawable="@drawable/background_gradient" />
+        android:drawable="@drawable/background_gradient"
+        android:gravity="fill" />
     <item
         android:width="230dp"
         android:height="230dp"
-        android:top="270dp"
         android:drawable="@drawable/splash_screen_icon"
-        android:gravity="center_horizontal" />
+        android:gravity="center" />
 </layer-list>
