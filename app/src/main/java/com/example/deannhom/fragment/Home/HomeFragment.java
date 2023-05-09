@@ -179,7 +179,7 @@ public class HomeFragment extends Fragment {
                     mediaPlayer.start();
 
                     mediaPlayer.setOnCompletionListener(player -> onDonePlayingPlayer());
-                    binding.btnAudio.setImageDrawable(ContextCompat.getDrawable(this.requireContext(), R.drawable.baseline_pause_24));
+                    binding.btnAudio.setImageDrawable(ContextCompat.getDrawable(this.requireContext(), R.drawable.baseline_stop_24));
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -339,7 +339,7 @@ public class HomeFragment extends Fragment {
 
         mediaPlayer = null;
 
-        binding.btnAudio.setImageDrawable(ContextCompat.getDrawable(this.requireContext(), R.drawable.baseline_play_arrow_24));
+        binding.btnAudio.setImageDrawable(ContextCompat.getDrawable(this.requireContext(), R.drawable.baseline_volume_up_24));
     }
 
     @Override
